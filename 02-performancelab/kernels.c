@@ -44,11 +44,12 @@ void naive_rotate(int dim, pixel *src, pixel *dst)
 
     for ( i = dim - 1 ; i >= 0 ; --i )
     {
-        for ( j = 0 , iTemp = i ; j < dim ; ++j )
+        for ( j = 0 , iTemp = i ; j < dim ; )
         {
             * dst = src [ iTemp ] ;
             iTemp += dim ;
             ++ dst ;
+            ++j ;
         }
     }
 }
