@@ -1,3 +1,7 @@
 .vscode/
 .DS_Store
 *.o
+*.tar
+03-cachelab/csim
+03-cachelab/csim
+03-cachelab/tracegen
