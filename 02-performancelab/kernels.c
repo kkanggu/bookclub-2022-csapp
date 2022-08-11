@@ -34,12 +34,20 @@ team_t team = {
 char naive_rotate_descr[] = "naive_rotate: Naive baseline implementation";
 void naive_rotate(int dim, pixel *src, pixel *dst) 
 {
-//    int i, j;
-//
-//    for (i = 0; i < dim; i++)
-//	for (j = 0; j < dim; j++)
-//	    dst[RIDX(dim-1-j, i, dim)] = src[RIDX(i, j, dim)];
+    int i, j;
 
+    for (i = 0; i < dim; i++)
+        for (j = 0; j < dim; j++)
+            dst[RIDX(dim-1-j, i, dim)] = src[RIDX(i, j, dim)];
+}
+
+/* 
+ * rotate - Your current working version of rotate
+ * IMPORTANT: This is the version you will be graded on
+ */
+char rotate_descr[] = "rotate: Current working version";
+void rotate(int dim, pixel *src, pixel *dst) 
+{
     int i , j , iTemp ;
 
     for ( i = dim - 1 ; i >= 0 ; --i )
@@ -52,16 +60,6 @@ void naive_rotate(int dim, pixel *src, pixel *dst)
             ++j ;
         }
     }
-}
-
-/* 
- * rotate - Your current working version of rotate
- * IMPORTANT: This is the version you will be graded on
- */
-char rotate_descr[] = "rotate: Current working version";
-void rotate(int dim, pixel *src, pixel *dst) 
-{
-    naive_rotate(dim, src, dst);
 }
 
 /*********************************************************************
@@ -164,21 +162,11 @@ static pixel avg(int dim, int i, int j, pixel *src)
 char naive_smooth_descr[] = "naive_smooth: Naive baseline implementation";
 void naive_smooth(int dim, pixel *src, pixel *dst) 
 {
-//    int i, j;
-//
-//    for (i = 0; i < dim; i++)
-//	for (j = 0; j < dim; j++)
-//	    dst[RIDX(i, j, dim)] = avg(dim, i, j, src);
+    int i, j;
 
-    int i , j ;
-
-    for ( i = 0 ; i < dim ; ++i )
-    {
-        for ( j = 0 ; j < dim ; ++j , ++ dst )
-        {
-            * dst = avg ( dim , i , j , src ) ;
-        }
-    }
+    for (i = 0; i < dim; i++)
+        for (j = 0; j < dim; j++)
+            dst[RIDX(i, j, dim)] = avg(dim, i, j, src);    
 }
 
 /*
@@ -188,7 +176,15 @@ void naive_smooth(int dim, pixel *src, pixel *dst)
 char smooth_descr[] = "smooth: Current working version";
 void smooth(int dim, pixel *src, pixel *dst) 
 {
-    naive_smooth(dim, src, dst);
+    int i , j ;
+
+    for ( i = 0 ; i < dim ; ++i )
+    {
+        for ( j = 0 ; j < dim ; ++j , ++ dst )
+        {
+            * dst = avg ( dim , i , j , src ) ;
+        }
+    }
 }
 
 /********************************************************************* 
