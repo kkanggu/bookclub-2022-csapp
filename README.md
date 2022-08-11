@@ -1,5 +1,7 @@
 # CSAPP Bookclub
 
+![CSAPP](./CSAPP.png)
+
 CSAPP study at [Soongsil.dev](http://Soongsil.dev)  
 This repositiy is my assignments  
 Best assignment is at [CSAPP repository](https://github.com/Soongsil-Developers/bookclub-2022-csapp)  
