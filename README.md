@@ -8,3 +8,4 @@ Best assignment is at [CSAPP repository](https://github.com/Soongsil-Developers/
 
 ### Study posting
 05 - [Optimizing Program Performance (Performance lab)](https://kkanggu39.tistory.com/96)
+06 - [The Memory Hierarchy (Cache lab)](https://kkanggu39.tistory.com/102)
