@@ -19,15 +19,77 @@ int is_transpose(int M, int N, int A[N][M], int B[M][N]);
  *     searches for that string to identify the transpose function to
  *     be graded. 
  */
-char transpose_submit_desc[] = "Transpose submission";
-void transpose_submit(int M, int N, int A[N][M], int B[M][N])
+typedef void (*per_block_t)(int M, int N, int input[N][M], int output[M][N], int row, int col);
+void square(int M, int N, int input[N][M], int output[M][N], int row, int col);
+void square_hard(int M, int N, int input[N][M], int output[M][N], int row, int col);
+void naive(int M, int N, int input[N][M], int output[M][N], int row, int col);
+
+void transpose(int M, int N, int input[N][M], int output[M][N])
 {
+  per_block_t per_block;
+  if (M == 32 && N == 32) {
+    per_block = square;
+  } else if (M == 64 && N == 64) {
+    per_block = square_hard;
+  } else {
+    per_block = naive;
+  }
+
+  for (int row = 0; row < N; row += 8) {
+    for (int col = 0; col < M; col += 8) {
+      per_block(M, N, input, output, row, col);
+    }
+  }
 }
 
-/* 
- * You can define additional transpose functions below. We've defined
- * a simple one below to help you get started. 
- */ 
+void square(int M, int N, int input[N][M], int output[M][N], int row, int col) {
+  if (row != col) { return naive(M, N, input, output, row, col); }
+
+  // Special handling for same block
+  for (int i = row; i < row + 8 && i < N; ++i) {
+    int tmp = input[i][i];
+    for (int j = col; j < col + 8 && j < M; ++j) {
+      // "output[j][i] = input[i][j]" for same i, j will cause cache miss.
+      if (i == j) { continue; }
+      output[j][i] = input[i][j];
+    }
+    output[i][i] = tmp;
+  }
+}
+
+void square_hard(int M, int N, int input[N][M], int output[M][N], int row, int col) {
+  // 첫번째줄 미리 캐싱
+  int *t = &input[col][row + 4];
+  int a = t[0], b = t[1], c = t[2], d = t[3];
+
+  // output의 윗쪽 반
+  for (int k = 0; k < 8; ++k) {
+    int *t = &input[col + k][row];
+    int a = t[0], b = t[1], c = t[2], d = t[3];
+    t = &output[row][col + k];
+    t[0] = a; t[64] = b; t[128] = c; t[192] = d;
+  }
+
+  // output의 아랫쪽 반
+  for (int k = 7; k > 0; --k) {
+    int *t = &input[col + k][row + 4];
+    int a = t[0], b = t[1], c = t[2], d = t[3];
+    t = &output[row + 4][col + k];
+    t[0] = a; t[64] = b; t[128] = c; t[192] = d;
+  }
+
+  // 캐싱된 첫번째줄 사용
+  t = &output[row + 4][col];
+  t[0] = a; t[64] = b; t[128] = c; t[192] = d;
+}
+
+void naive(int M, int N, int input[N][M], int output[M][N], int row, int col) {
+  for (int i = col; i < col + 8 && i < M; ++i) {
+    for (int j = row; j < row + 8 && j < N; ++j) {
+      output[i][j] = input[j][i];
+    }
+  }
+}
 
 /* 
  * trans - A simple baseline transpose function, not optimized for the cache.
@@ -56,7 +118,7 @@ void trans(int M, int N, int A[N][M], int B[M][N])
 void registerFunctions()
 {
     /* Register your solution function */
-    registerTransFunction(transpose_submit, transpose_submit_desc); 
+    registerTransFunction(transpose, "Transpose submission"); 
 
     /* Register any additional transpose functions */
     registerTransFunction(trans, trans_desc); 
