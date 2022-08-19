@@ -1,11 +1,33 @@
-# CSAPP Bookclub
+# CSAPP 북클럽
 
-![CSAPP](./CSAPP.png)
+## 📖 기본 운영방식
 
-CSAPP study at [Soongsil.dev](http://Soongsil.dev)  
-This repositiy is my assignments  
-Best assignment is at [CSAPP repository](https://github.com/Soongsil-Developers/bookclub-2022-csapp)  
+---
 
-### Study posting
-05 - [Optimizing Program Performance (Performance lab)](https://kkanggu39.tistory.com/96)  
-06 - [The Memory Hierarchy (Cache lab)](https://kkanggu39.tistory.com/102)
+📌  2주당 1회 랩과제 1개씩 할 예정입니다! 
+
+📌  랩과제는 [Soongsil.dev](http://Soongsil.dev) CSAPP 리포지토리에 업로드해놓겠습니다! 
+
+📌  푼 랩과제는 [Soongsil.dev](http://Soongsil.dev) 내 CSAPP 리포지토리에 PR 보내주세요! 
+
+브랜치 이름은 과제이름-이름으로 해주시면 되겠습니다!
+
+## 🏡 모임 공지
+
+---
+
+📍 일요일 오전에 장소 공지드리겠습니다. 아마 학교 내 강의실을 사용할거같습니다!
+
+## 🗓️ 목차별 운영 방식(변동 가능성 있습니다!)
+
+---
+
+⏳ 1회차(7.10) - OT
+
+⏳ 2회차(7.24) - performance lab - 5장
+
+⏳ 3회차(8.7) -  cache lab - 6장
+
+⏳ 4회차(8.21) - malloc lab - 9장
+
+⏳ 5회차(9.4) -  shell lab - 10,12장
