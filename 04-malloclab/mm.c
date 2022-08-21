@@ -121,19 +121,21 @@ void mm_free(void *ptr)
  */
 void *mm_realloc(void *ptr, size_t size)
 {
-    void *oldptr = ptr;
-    void *newptr;
-    size_t copySize;
-    
-    newptr = mm_malloc(size);
-    if (newptr == NULL)
-      return NULL;
-    copySize = *(size_t *)((char *)oldptr - SIZE_T_SIZE);
-    if (size < copySize)
-      copySize = size;
-    memcpy(newptr, oldptr, copySize);
-    mm_free(oldptr);
-    return newptr;
+    void * newPtr = mm_malloc ( size ) ;
+
+    if ( NULL == newPtr )       // Run out of memory
+        return NULL ;
+
+    int iCopyDataSize = GET_SIZE ( ptr ) ;
+    if ( iCopyDataSize > size )
+        iCopyDataSize = size ;
+
+    memcpy ( GET_DATA_BLOCK ( newPtr ) , GET_DATA_BLOCK ( ptr ) , iCopyDataSize ) ;
+
+    mm_free ( ptr ) ;
+
+
+    return newPtr ;
 }
 
 //----------mine----------
