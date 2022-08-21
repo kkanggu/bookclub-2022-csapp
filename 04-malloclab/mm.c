@@ -80,7 +80,7 @@ void* mm_malloc(size_t size)
     }
 
     int iDataSize = ALIGN ( size ) ;
-    void * ptr = mem_sbrk ( iDataSize + 4 * WSIZE ) ;
+    void * ptr = mem_sbrk ( iDataSize + ( WSIZE << 2 ) ) ;
     void * setPtr ;
 
     if ( ( void * ) -1 == ptr )         // Run out of memory
@@ -105,8 +105,12 @@ void* mm_malloc(size_t size)
  */
 void mm_free(void *ptr)
 {
-    int iSize = GET_SIZE_BITS ( * ( ( int * ) ptr ) ) ;
-    
+    int iFullSize = GET_SIZE_BITS ( ptr ) + ( WSIZE << 2 ) ;
+    void * setPtr = ( char * ) ptr - WSIZE ;
+
+
+
+    memset ( setPtr , 0 , iFullSize ) ;
 }
 
 /*
