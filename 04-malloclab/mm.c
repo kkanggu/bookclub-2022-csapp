@@ -86,14 +86,15 @@ void* mm_malloc(size_t size)
     if ( ( void * ) -1 == ptr )         // Run out of memory
         return NULL ;
 
-    memset ( ptr , -1 , WSIZE ) ;        // Fill padding with 11....
-    memset ( ptr + WSIZE , 0 , iDataSize + 3 * WSIZE ) ;
-    ptr = ( char * ) ptr + WSIZE ;    
+    ptr = ( char * ) ptr + WSIZE ;
+
+    memset ( GET_PADDING ( ptr ) , -1 , WSIZE ) ;        // Fill padding with 11....
+    memset ( ptr , 0 , iDataSize + 3 * WSIZE ) ;  
     
     ptr = PACK ( iDataSize , 1 ) ;       // Set Prologue Header
-    setPtr = ( char * ) ptr + WSIZE ;
+    setPtr = GET_PROLOGUE_FOOTER ( ptr ) ;
     setPtr = PACK ( 0 , 1 ) ;       // Set Prologue Footer
-    setPtr = ( char * ) ptr + iDataSize + WSIZE ;
+    setPtr = GET_PROLOGUE_FOOTER ( ptr ) ;
     setPtr = PACK ( 0 , 1 ) ;       // Set Epilogue Footer
 
 
@@ -106,7 +107,7 @@ void* mm_malloc(size_t size)
 void mm_free(void *ptr)
 {
     int iFullSize = GET_SIZE_BITS ( ptr ) + ( WSIZE << 2 ) ;
-    void * setPtr = ( char * ) ptr - WSIZE ;
+    void * setPtr = GET_PADDING ( ptr ) ;
 
 
 
