@@ -24,16 +24,23 @@
  ********************************************************/
 team_t team = {
     /* Team name */
-    "noteam",
+    "Soongsil-Developers",
     /* First member's full name */
-    "KUR",
+    "kkanggu",
     /* First member's email address */
-    "nope"
+    "rica742244@gmail.com"
     /* Second member's full name (leave blank if none) */
     "",
     /* Second member's email address (leave blank if none) */
     ""
 };
+
+/*
+ * | Padding | Prologue Header | Prologue Footer | Data | Epilogue Footer
+ * Pointer of allocated data points `Prologue Header`
+ * Prologue Header is `Data SIZE | 000`, if allocated, this |= 0x1
+ * Prologue Footer and Epilogue Footer is 0, if allocated, this = 1
+ */
 
 
 /* 
@@ -67,22 +74,30 @@ int mm_init(void)
  */
 void* mm_malloc(size_t size)
 {
-    if(size == 0){
-        return NULL;
+    if ( 0 == size )
+    {
+        return NULL ;
     }
 
-    int     newsize = ALIGN(size + WSIZE);  // add header(4byte)!
-    void*   ptr     = mem_sbrk(newsize);    // ptr must be aligned.
-    if(ptr == (void*)-1)
-        return NULL;
-    else{
-        *(size_t*)ptr = PACK(newsize,1); // BLOCK size! NOT PAYLOAD size!
-                printf("-origin size = %d \n", size);
-                printf("-aligned size = %d \n", ALIGN(size));
-                printf("-ptr = %p \n", ptr);
-                printf("-in malloc %d \n", GET(ptr));
-        return (void*)((char*)ptr + WSIZE); // ptr points payload!
-    } 
+    int iDataSize = ALIGN ( size ) ;
+    void * ptr = mem_sbrk ( iDataSize + 4 * WSIZE ) ;
+    void * setPtr ;
+
+    if ( ( void * ) -1 == ptr )         // Run out of memory
+        return NULL ;
+
+    memset ( ptr , -1 , WSIZE ) ;        // Fill padding with 11....
+    memset ( ptr + WSIZE , 0 , iDataSize + 3 * WSIZE ) ;
+    ptr = ( char * ) ptr + WSIZE ;    
+    
+    ptr = PACK ( iDataSize , 1 ) ;       // Set Prologue Header
+    setPtr = ( char * ) ptr + WSIZE ;
+    setPtr = PACK ( 0 , 1 ) ;       // Set Prologue Footer
+    setPtr = ( char * ) ptr + iDataSize + WSIZE ;
+    setPtr = PACK ( 0 , 1 ) ;       // Set Epilogue Footer
+
+
+    return ptr ;
 }
 
 /*
@@ -90,6 +105,8 @@ void* mm_malloc(size_t size)
  */
 void mm_free(void *ptr)
 {
+    int iSize = GET_SIZE_BITS ( * ( ( int * ) ptr ) ) ;
+    
 }
 
 /*
@@ -126,15 +143,3 @@ void Mm_init(void)
         exit(1);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-

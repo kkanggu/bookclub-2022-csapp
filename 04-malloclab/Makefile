@@ -21,10 +21,14 @@ ta: $(OBJS)
 	python auto-grader.py
 t:
 	#-- screen s1 --
-	screen -S s1 -X stuff "clear"
-	screen -S s1 -X stuff "$(CC) $(CFLAGS) -c memlib.c memlib.h 2>&1 "
-	screen -S s1 -X stuff "$(CC) $(CFLAGS) -o mm-test memlib.c memlib.h mm.c mm.h mm-test.c $(LIB) 2>&1 | python printer.py"
-	screen -S s1 -X stuff "./mm-test 2>&1 | python printer.py"
+	screen -S s1 -X stuff "clear
+"
+	screen -S s1 -X stuff "$(CC) $(CFLAGS) -c memlib.c memlib.h 2>&1 
+"
+	screen -S s1 -X stuff "$(CC) $(CFLAGS) -o mm-test memlib.c memlib.h mm.c mm.h mm-test.c $(LIB) 2>&1 | python printer.py
+"
+	screen -S s1 -X stuff "./mm-test 2>&1 | python printer.py
+"
 	#-- here --
 	$(CC) $(CFLAGS) -c memlib.c memlib.h 
 	$(CC) $(CFLAGS) -o mm-test memlib.c memlib.h mm.c mm.h mm-test.c $(LIB)
@@ -68,7 +72,7 @@ full: $(OBJS)
 
 mdriver.o: mdriver.c fsecs.h fcyc.h clock.h memlib.h config.h mm.h
 memlib.o: memlib.c memlib.h
-	#$(CC) $(CFLAGS) -o memlib.o memlib.c memlib.h
+	$(CC) $(CFLAGS) -o memlib.o memlib.c memlib.h
 mm.o: mm.c mm.h memlib.h
 fsecs.o: fsecs.c fsecs.h config.h
 fcyc.o: fcyc.c fcyc.h
