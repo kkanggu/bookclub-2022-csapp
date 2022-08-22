@@ -36,8 +36,8 @@ team_t team = {
 };
 
 /*
- * | Padding | Prologue Header | Prologue Footer | Data | Epilogue Footer
- * Pointer of allocated data points `Prologue Header`
+ * | Padding | Prologue Header | Prologue Footer | Data Block | Epilogue Footer
+ * Pointer of allocated data points `Data Block`
  * Prologue Header is `Data SIZE | 000`, if allocated, this |= 0x1
  * Prologue Footer and Epilogue Footer is 0, if allocated, this = 1
  */
@@ -86,15 +86,16 @@ void* mm_malloc(size_t size)
     if ( ( void * ) -1 == ptr )         // Run out of memory
         return NULL ;
 
-    ptr = ptr + WSIZE ;
+    ptr = ptr + 3 * WSIZE ;
 
     memset ( GET_PADDING ( ptr ) , -1 , WSIZE ) ;        // Fill padding with 11....
-    memset ( ptr , 0 , iDataSize + 3 * WSIZE ) ;  
+    memset ( GET_PROLOGUE_HEADER ( ptr ) , 0 , iDataSize + 3 * WSIZE ) ;  
     
-    * ( size_t * ) ptr = PACK ( iDataSize , 1 ) ;       // Set Prologue Header
+    setPtr = GET_PROLOGUE_HEADER ( ptr ) ;
+    * ( size_t * ) setPtr = PACK ( iDataSize , 1 ) ;       // Set Prologue Header
     setPtr = GET_PROLOGUE_FOOTER ( ptr ) ;
     * ( size_t * ) setPtr = PACK ( 0 , 1 ) ;       // Set Prologue Footer
-    setPtr = GET_PROLOGUE_FOOTER ( ptr ) ;
+    setPtr = GET_EPILOGUE_FOOTER ( ptr ) ;
     * ( size_t * ) setPtr = PACK ( 0 , 1 ) ;       // Set Epilogue Footer
 
 
@@ -106,7 +107,7 @@ void* mm_malloc(size_t size)
  */
 void mm_free(void *ptr)
 {
-    int iFullSize = GET_SIZE ( ptr ) + ( WSIZE << 2 ) ;
+    int iFullSize = GET_SIZE ( GET_PROLOGUE_HEADER ( ptr ) ) + ( WSIZE << 2 ) ;
     void * setPtr = GET_PADDING ( ptr ) ;
 
 
@@ -126,11 +127,11 @@ void *mm_realloc(void *ptr, size_t size)
     if ( NULL == newPtr )       // Run out of memory
         return NULL ;
 
-    int iCopyDataSize = GET_SIZE ( ptr ) ;
+    int iCopyDataSize = GET_SIZE ( GET_PROLOGUE_HEADER ( ptr ) ) ;
     if ( iCopyDataSize > size )
         iCopyDataSize = size ;
 
-    memcpy ( GET_DATA_BLOCK ( newPtr ) , GET_DATA_BLOCK ( ptr ) , iCopyDataSize ) ;
+    memcpy ( newPtr , ptr , iCopyDataSize ) ;
 
     mm_free ( ptr ) ;
 

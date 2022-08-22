@@ -28,10 +28,10 @@ extern void     Mm_init(void);
 #define GET_ALLOC(p)    (GET(p) & 0x1) 
 
 /* Get Prologue Header ptr bp, get Padding, Prologue Footer, Data block, Epilogue Footer */
-#define GET_PADDING(bp)              ( ( char * ) bp - WSIZE )
-#define GET_PROLOGUE_FOOTER(bp)      ( ( char * ) bp + WSIZE )
-#define GET_DATA_BLOCK(bp)           ( ( char * ) bp + ( WSIZE << 1 ) )
-#define GET_EPILOGUE_FOOTER(bp)      ( ( char * ) bp + GET_SIZE ( bp ) + ( WSIZE << 1 ) )
+#define GET_PADDING(bp)              ( ( char * ) bp - 3 * WSIZE )
+#define GET_PROLOGUE_HEADER(bp)      ( ( char * ) bp - ( WSIZE << 1 ) )
+#define GET_PROLOGUE_FOOTER(bp)      ( ( char * ) bp - WSIZE )
+#define GET_EPILOGUE_FOOTER(bp)      ( ( char * ) bp + GET_SIZE ( bp ) )
 
 #define SIZE_T_SIZE     (ALIGN(sizeof(size_t)))
 
