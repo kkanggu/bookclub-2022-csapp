@@ -623,7 +623,7 @@ static int eval_mm_valid(trace_t *trace, int tracenum, range_t **ranges)
 	     * if we realloc the block and wish to make sure that the old
 	     * data was copied to the new block
 	     */
-	    memset(p, index & 0xFF, size);
+	    //memset(p, index & 0xFF, size);
 
 	    /* Remember region */
 	    trace->blocks[index] = p;

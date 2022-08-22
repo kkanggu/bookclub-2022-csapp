@@ -28,7 +28,7 @@ team_t team = {
     /* First member's full name */
     "kkanggu",
     /* First member's email address */
-    "rica742244@gmail.com"
+    "rica742244@gmail.com",
     /* Second member's full name (leave blank if none) */
     "",
     /* Second member's email address (leave blank if none) */
@@ -86,16 +86,16 @@ void* mm_malloc(size_t size)
     if ( ( void * ) -1 == ptr )         // Run out of memory
         return NULL ;
 
-    ptr = ( char * ) ptr + WSIZE ;
+    ptr = ptr + WSIZE ;
 
     memset ( GET_PADDING ( ptr ) , -1 , WSIZE ) ;        // Fill padding with 11....
     memset ( ptr , 0 , iDataSize + 3 * WSIZE ) ;  
     
-    ptr = PACK ( iDataSize , 1 ) ;       // Set Prologue Header
+    * ( size_t * ) ptr = PACK ( iDataSize , 1 ) ;       // Set Prologue Header
     setPtr = GET_PROLOGUE_FOOTER ( ptr ) ;
-    setPtr = PACK ( 0 , 1 ) ;       // Set Prologue Footer
+    * ( size_t * ) setPtr = PACK ( 0 , 1 ) ;       // Set Prologue Footer
     setPtr = GET_PROLOGUE_FOOTER ( ptr ) ;
-    setPtr = PACK ( 0 , 1 ) ;       // Set Epilogue Footer
+    * ( size_t * ) setPtr = PACK ( 0 , 1 ) ;       // Set Epilogue Footer
 
 
     return ptr ;
@@ -106,7 +106,7 @@ void* mm_malloc(size_t size)
  */
 void mm_free(void *ptr)
 {
-    int iFullSize = GET_SIZE_BITS ( ptr ) + ( WSIZE << 2 ) ;
+    int iFullSize = GET_SIZE ( ptr ) + ( WSIZE << 2 ) ;
     void * setPtr = GET_PADDING ( ptr ) ;
 
 
