@@ -13,8 +13,8 @@ LIB = -lcmocka
 
 OBJS = mdriver.o mm.o memlib.o fsecs.o fcyc.o clock.o ftimer.o
 
-#mdriver: $(OBJS)
-	#$(CC) $(CFLAGS) -o mdriver $(OBJS)
+mdriver: $(OBJS)
+	$(CC) $(CFLAGS) -o mdriver $(OBJS)
 
 ta: $(OBJS)
 	$(CC) $(CFLAGS) -o mdriver $(OBJS) 
@@ -67,8 +67,7 @@ full: $(OBJS)
 	./mdriver -vga -f traces/realloc2-bal.rep
 
 mdriver.o: mdriver.c fsecs.h fcyc.h clock.h memlib.h config.h mm.h
-memlib.o: memlib.c memlib.h
-	#$(CC) $(CFLAGS) -o memlib.o memlib.c memlib.h
+memlib.o: memlib.c memlib.h mm.h
 mm.o: mm.c mm.h memlib.h
 fsecs.o: fsecs.c fsecs.h config.h
 fcyc.o: fcyc.c fcyc.h

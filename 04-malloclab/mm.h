@@ -23,28 +23,15 @@ extern void     Mm_init(void);
 #define GET(p)          (*(unsigned int*)(p)) 
 #define PUT(p, val)     (*(unsigned int*)(p) = (val))
 
-/* Read the size and allocated fields from addres's p (NOT from HEAD!)*/
-#define GET_SIZE_BITS(p)    (GET(p) & ~0x7)
-#define GET_ALLOC_BIT(p)    (GET(p) & 0x1) 
+/* Read the size and allocated fields from Prologue Header */
+#define GET_SIZE(p)    (GET(p) & ~0x7)
+#define GET_ALLOC(p)    (GET(p) & 0x1) 
 
-/* Get the size and allocated fields from baseptr's HEADER */
-#define GET_SIZE(bp)    GET_SIZE_BITS( HDRP(bp) )
-#define IS_ALLOC(bp)    GET_ALLOC_BIT( HDRP(bp) )
-
-/* Set block size 
- * NOTE: size must be ALIGNED! */
-#define SET_SIZE(bp, size)  do{                                 \
-                                assert(size % ALIGNMENT == 0);  \
-                            }while(0);
-//PUT(HDRP(bp), size);
-
-#define SET_ALLOC(bp,val)   do{                                 \
-                                assert(val == 0 || val == 1);   \
-                            }while(0);
-                                    
-
-/* Ginven block ptr bp, compute address of its header and footer*/
-#define HDRP(bp)        ((char*)(bp) - WSIZE)
+/* Get Prologue Header ptr bp, get Padding, Prologue Footer, Data block, Epilogue Footer */
+#define GET_PADDING(bp)              ( ( char * ) bp - 3 * WSIZE )
+#define GET_PROLOGUE_HEADER(bp)      ( ( char * ) bp - ( WSIZE << 1 ) )
+#define GET_PROLOGUE_FOOTER(bp)      ( ( char * ) bp - WSIZE )
+#define GET_EPILOGUE_FOOTER(bp)      ( ( char * ) bp + GET_SIZE ( bp ) )
 
 #define SIZE_T_SIZE     (ALIGN(sizeof(size_t)))
 
