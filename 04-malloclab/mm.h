@@ -28,12 +28,17 @@ extern void     Mm_init(void);
 #define GET_ALLOC(p)    (GET(p) & 0x1) 
 
 /* Get Prologue Header ptr bp, get Padding, Prologue Footer, Data block, Epilogue Footer */
-#define GET_PADDING(bp)              ( ( char * ) bp - 3 * WSIZE )
-#define GET_PROLOGUE_HEADER(bp)      ( ( char * ) bp - ( WSIZE << 1 ) )
-#define GET_PROLOGUE_FOOTER(bp)      ( ( char * ) bp - WSIZE )
-#define GET_EPILOGUE_FOOTER(bp)      ( ( char * ) bp + GET_SIZE ( bp ) )
+#define GET_PADDING(bp)                 ( ( char * ) bp - 3 * WSIZE )
+#define GET_PROLOGUE_HEADER(bp)         ( ( char * ) bp - ( WSIZE << 1 ) )
+#define GET_PROLOGUE_FOOTER(bp)         ( ( char * ) bp - WSIZE )
+#define GET_EPILOGUE_FOOTER(bp)         ( ( char * ) bp + GET_SIZE ( bp ) )
+
+#define GET_PREV_BLOCK(bp)              ( ( char * ) bp - GET_SIZE ( GET_PADDING ( ptr ) - WSIZE ) - WSIZE * 4 )
+#define GET_NEXT_BLOCK(bp)              ( ( char * ) bp + GET_SIZE ( GET_PROLOGUE_HEADER ( bp ) ) + WSIZE * 4 )
 
 #define SIZE_T_SIZE     (ALIGN(sizeof(size_t)))
+
+#define MALLOC_SIZE     ( 1 << 12 )
 
 /* 
  * Students work in teams of one or two.  Teams enter their team name, 
