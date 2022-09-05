@@ -21,10 +21,14 @@ ta: $(OBJS)
 	python auto-grader.py
 t:
 	#-- screen s1 --
-	screen -S s1 -X stuff "clear"
-	screen -S s1 -X stuff "$(CC) $(CFLAGS) -c memlib.c memlib.h 2>&1 "
-	screen -S s1 -X stuff "$(CC) $(CFLAGS) -o mm-test memlib.c memlib.h mm.c mm.h mm-test.c $(LIB) 2>&1 | python printer.py"
-	screen -S s1 -X stuff "./mm-test 2>&1 | python printer.py"
+	screen -S s1 -X stuff "clear
+"
+	screen -S s1 -X stuff "$(CC) $(CFLAGS) -c memlib.c memlib.h 2>&1 
+"
+	screen -S s1 -X stuff "$(CC) $(CFLAGS) -o mm-test memlib.c memlib.h mm.c mm.h mm-test.c $(LIB) 2>&1 | python printer.py
+"
+	screen -S s1 -X stuff "./mm-test 2>&1 | python printer.py
+"
 	#-- here --
 	$(CC) $(CFLAGS) -c memlib.c memlib.h 
 	$(CC) $(CFLAGS) -o mm-test memlib.c memlib.h mm.c mm.h mm-test.c $(LIB)

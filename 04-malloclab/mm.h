@@ -23,17 +23,21 @@ extern void     Mm_init(void);
 #define GET(p)          (*(unsigned int*)(p)) 
 #define PUT(p, val)     (*(unsigned int*)(p) = (val))
 
-/* Read the size and allocated fields from Prologue Header */
-#define GET_SIZE(p)    (GET(p) & ~0x7)
-#define GET_ALLOC(p)    (GET(p) & 0x1) 
-
 /* Get Prologue Header ptr bp, get Padding, Prologue Footer, Data block, Epilogue Footer */
-#define GET_PADDING(bp)              ( ( char * ) bp - 3 * WSIZE )
-#define GET_PROLOGUE_HEADER(bp)      ( ( char * ) bp - ( WSIZE << 1 ) )
-#define GET_PROLOGUE_FOOTER(bp)      ( ( char * ) bp - WSIZE )
-#define GET_EPILOGUE_FOOTER(bp)      ( ( char * ) bp + GET_SIZE ( bp ) )
+#define GET_PADDING(bp)                 ( ( char * ) bp - ( WSIZE << 1 ) )
+#define GET_PROLOGUE_HEADER(bp)         ( ( char * ) bp - WSIZE )
+#define GET_EPILOGUE_FOOTER(bp)         ( ( char * ) bp + GET_SIZE ( bp ) )
+
+#define GET_PREV_BLOCK(bp)              ( ( char * ) bp - ( * ( unsigned int * ) ( bp - ( WSIZE << 2 ) ) & ~0x7 ) - ( WSIZE << 2 ) )
+#define GET_NEXT_BLOCK(bp)              ( ( char * ) bp + GET_SIZE ( bp ) + ( WSIZE << 2 ) )
+
+/* Read the size and allocated fields from Prologue Header */
+#define GET_SIZE(p)     ( GET ( GET_PROLOGUE_HEADER ( p ) ) & ~0x7 )
+#define GET_ALLOC(p)    ( GET ( GET_PROLOGUE_HEADER ( p ) ) & 0x1 )
 
 #define SIZE_T_SIZE     (ALIGN(sizeof(size_t)))
+
+#define MALLOC_SIZE     ( 1 << 12 )
 
 /* 
  * Students work in teams of one or two.  Teams enter their team name, 

@@ -59,27 +59,10 @@ void *mem_sbrk(int incr)
 {
     char *old_brk = mem_brk;
 
-    if ( incr < 0 )
-    {
+    if ( (incr < 0) || ((mem_brk + incr) > mem_max_addr)) {
         errno = ENOMEM;
-        fprintf(stderr, "ERROR: mem_sbrk failed. Request minus size\n");
+        fprintf(stderr, "ERROR: mem_sbrk failed. Ran out of memory...\n");
         return (void *)-1;
-    }
-    else if ( mem_max_addr < ( mem_brk + incr ) )
-    {
-	    if ( NULL == ( old_brk = kg_mem_find_empty_space ( incr ) ) )       // Find empty place from mem_start_brk
-        {
-            kg_coalesce_heap () ;                       // If NULL, coalesce heap to reduce external fragmentation
-
-	        if ( NULL == ( old_brk = kg_mem_find_empty_space ( incr ) ) )   // If NULL, too less memory.
-            {
-                errno = ENOMEM;
-                fprintf(stderr, "ERROR: mem_sbrk failed. Ran out of memory\n");
-                return (void *)-1;
-            }
-        }
-
-        mem_brk = old_brk ;
     }
     mem_brk += incr;
     return (void *)old_brk;
@@ -115,79 +98,4 @@ size_t mem_heapsize()
 size_t mem_pagesize()
 {
     return (size_t)getpagesize();
-}
-
-void kg_coalesce_heap ( void )
-{
-    char * left_empty_ptr = mem_start_brk + WSIZE ;
-    char * right_data_ptr = mem_start_brk + WSIZE ;
-    int iSize ;
-
-
-
-    while ( left_empty_ptr <= mem_max_addr )
-    {
-        if ( 0 == * ( int * ) left_empty_ptr )       // Find empty space, move right_data_ptr to left_empty_ptr
-        {
-            while ( right_data_ptr <= mem_max_addr )
-            {
-                if ( 0 != * ( int * ) right_data_ptr )
-                {
-                    iSize = GET_SIZE ( right_data_ptr + WSIZE * 3 ) + ( WSIZE << 2 ) ;
-
-                    memcpy ( left_empty_ptr , right_data_ptr , iSize ) ;
-
-                    break ;
-                }
-                else
-                    right_data_ptr = right_data_ptr + DSIZE ;
-            }
-
-            if ( right_data_ptr > mem_max_addr )
-                break ;
-        }
-        else
-            left_empty_ptr = left_empty_ptr + DSIZE ;
-    }
-}
-
-void* kg_mem_find_empty_space ( int iSize )
-{
-    char * targetPtr = mem_start_brk + WSIZE ;
-    char * tempPtr ;
-    int iTempSize = 0 ;
-
-
-
-    while ( targetPtr + iSize <= mem_max_addr )
-    {
-        iTempSize = 0 ;
-
-
-        if ( -1 == * ( int * ) targetPtr )      // Find Padding
-        {
-            targetPtr = targetPtr + WSIZE * 3 ;
-            targetPtr = GET_EPILOGUE_FOOTER ( targetPtr ) + WSIZE ;
-        }
-        else                                    // Find empty memory
-        {
-            tempPtr = targetPtr ;
-
-            while ( iTempSize != iSize )
-            {
-
-                if ( 0 != * ( int * ) tempPtr )           // If find allocated memory, can't allocated at this memory
-                    break ;
-
-                tempPtr = tempPtr + DSIZE ;
-                iTempSize += DSIZE ;
-            }
-
-            if ( iTempSize == iSize )
-                return targetPtr ;
-        }
-    }
-
-
-    return NULL ;           // Can't find empty memory
 }
