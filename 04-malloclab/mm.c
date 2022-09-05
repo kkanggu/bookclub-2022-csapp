@@ -327,11 +327,12 @@ void *mm_realloc(void *ptr, size_t size)
     if ( NULL == newPtr )       // Run out of memory
         return NULL ;
 
-    int iCopyDataSize = GET_SIZE ( GET_PROLOGUE_HEADER ( ptr ) ) ;
-    if ( iCopyDataSize > size )
-        iCopyDataSize = size ;
+    size_t copyDataSize = GET_SIZE ( ptr ) ;
 
-    memcpy ( newPtr , ptr , iCopyDataSize ) ;
+    if ( copyDataSize > size )
+        copyDataSize = size ;
+
+    memcpy ( newPtr , ptr , copyDataSize ) ;
 
     mm_free ( ptr ) ;
 
